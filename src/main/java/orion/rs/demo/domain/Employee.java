@@ -1,5 +1,6 @@
 package orion.rs.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class Employee {
     @Email//da mora da bude u dobrom formatu
     private String email;
 
+    @JsonIgnore //rekurzivno trazenje instanci dolazi do greske - ovako resavamo
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     private List<Account> employeeAcounts = new ArrayList<>();
 

@@ -6,6 +6,7 @@ import orion.rs.demo.domain.Employee;
 import orion.rs.demo.exceptionHandling.EmployeeNotFoundException;
 import orion.rs.demo.repository.EmployeeRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,17 +17,22 @@ public class EmployeeServiceImplementation {
 
 
     /**
-     *
     * Deleting employee by ID
-     *
     * */
-
     public void deleteEmployee(Long id_employee) throws Exception {
 
         Employee employee = employeeRepository.findById(id_employee).orElseThrow(() ->
                 new EmployeeNotFoundException(id_employee));
 
         employeeRepository.delete(employee);
+    }
+
+    /**
+     * Get all employes from DB
+     * */
+
+    public List<Employee> getAllEmployes(){
+        return employeeRepository.findAll();
     }
 
 }
