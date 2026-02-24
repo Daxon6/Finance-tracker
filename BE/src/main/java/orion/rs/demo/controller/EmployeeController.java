@@ -5,10 +5,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import orion.rs.demo.dto.BulkEmployeeDTO;
 import orion.rs.demo.dto.EmployeeDto;
 import orion.rs.demo.service.EmployeeService;
+import orion.rs.demo.service.implementation.EmployeeServiceImplementation;
+
+import javax.print.attribute.standard.Media;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -16,7 +22,7 @@ import orion.rs.demo.service.EmployeeService;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-
+    private final EmployeeServiceImplementation employeeServiceImpl;
     @PostMapping
     public ResponseEntity<EmployeeDto> create(@Valid @RequestBody EmployeeDto dto) {
         EmployeeDto created = employeeService.create(dto);
@@ -47,5 +53,28 @@ public class EmployeeController {
         employeeService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+
+    @PostMapping(value = "bulkSaveAll",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> saveOrSkipEmployee(@RequestBody List<BulkEmployeeDTO> bulkEmployeeDTOS){
+
+            employeeServiceImpl.saveOrSkipEmployee(bulkEmployeeDTOS);
+            return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
+     * Get invalid bulk insert Employees
+     * */
+
+    /*
+    @GetMapping(value = "/getInvalidBulkEmployees", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<FailedEmployee>> getInvalidEmployee(){
+
+
+    }
+
+    */
+
+
 
 }

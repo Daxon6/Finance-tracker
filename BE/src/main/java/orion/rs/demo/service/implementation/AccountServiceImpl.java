@@ -1,6 +1,5 @@
 package orion.rs.demo.service.implementation;
 
-import jakarta.persistence.EntityNotFoundException;
 import orion.rs.demo.domain.Account;
 import orion.rs.demo.domain.AccountType;
 import orion.rs.demo.domain.Employee;
@@ -89,6 +88,8 @@ public class AccountServiceImpl implements AccountService {
                     HttpStatus.INTERNAL_SERVER_ERROR, "Greska prilikom cuvanja zaposlenog");
         }
     }
+
+
 
     @Override
     public void deleteAccount(Long id) {
