@@ -1,24 +1,30 @@
 package orion.rs.demo.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
+import orion.rs.demo.domain.Account;
 import orion.rs.demo.dto.AccountCreateDTO;
 import orion.rs.demo.dto.AccountDTO;
+import orion.rs.demo.dto.BulkInsertAccDTO;
 import orion.rs.demo.service.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import orion.rs.demo.service.EmployeeService;
+import java.util.List;
+import orion.rs.demo.service.implementation.AccountServiceImpl;
+
+
 
 @RestController
 @RequestMapping("/api/accounts")
 public class AccountController {
 
     private final AccountService accountService;
-    private final EmployeeService employeeService;
-
-    public AccountController(AccountService accountService, EmployeeService employeeService) {
+    private final AccountServiceImpl accountServiceImpl;
+    public AccountController(AccountService accountService, AccountServiceImpl accountServiceImpl) {
         this.accountService = accountService;
-        this.employeeService = employeeService;
+        this.accountServiceImpl = accountServiceImpl;
     }
 
     @PostMapping
@@ -39,5 +45,21 @@ public class AccountController {
     public ResponseEntity<Void> deleteAccount(@PathVariable Long id){
         accountService.deleteAccount(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Get all accounts from dataBase
+     * */
+    @GetMapping(value = "getAccounts",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Account>> getAllAcc(){
+        return ResponseEntity.status(HttpStatus.OK).body(accountServiceImpl.getAllAcc());
+    }
+
+    @PostMapping("/bulk")
+    public ResponseEntity<BulkInsertAccDTO> bulkInsertAccounts(
+            @RequestBody List<AccountCreateDTO> dtos) {
+
+        BulkInsertAccDTO result = accountService.bulkInsert(dtos);
+        return ResponseEntity.ok(result);
     }
 }

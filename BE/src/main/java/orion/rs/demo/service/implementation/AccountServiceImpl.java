@@ -6,6 +6,8 @@ import orion.rs.demo.domain.AccountType;
 import orion.rs.demo.domain.Employee;
 import orion.rs.demo.dto.AccountCreateDTO;
 import orion.rs.demo.dto.AccountDTO;
+import orion.rs.demo.dto.BulkInsertAccDTO;
+import orion.rs.demo.dto.FailedRecord;
 import orion.rs.demo.exceptionHandling.AccountNotFoundException;
 import orion.rs.demo.repository.AccountRepository;
 import orion.rs.demo.repository.EmployeeRepository;
@@ -14,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -25,6 +30,10 @@ public class AccountServiceImpl implements AccountService {
                               EmployeeRepository employeeRepository) {
         this.accountRepository = accountRepository;
         this.employeeRepository = employeeRepository;
+    }
+
+    public List<Account> getAllAcc(){
+        return accountRepository.findAll();
     }
 
     @Override
@@ -82,6 +91,55 @@ public class AccountServiceImpl implements AccountService {
             throw new AccountNotFoundException(id);
         }
         accountRepository.deleteById(id);
+    }
+
+
+    @Transactional
+    public BulkInsertAccDTO bulkInsert(List<AccountCreateDTO> dtos) {
+        List<Long> savedIds = new ArrayList<>();
+        List<FailedRecord> failedRecords = new ArrayList<>();
+
+        for (int i = 0; i < dtos.size(); i++) {
+            AccountCreateDTO dto = dtos.get(i);
+
+            try {
+                // Validacija zaposlenog
+                Employee employee = employeeRepository.findById(dto.getEmployeeId())
+                        .orElseThrow(() -> new IllegalArgumentException("Zaposleni nije pronadjen"));
+
+                // Validacija tipa (enum)
+                AccountType type;
+                try {
+                    type = AccountType.valueOf(dto.getType());
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Nevalidan tip naloga");
+                }
+
+                // Validacija balansa i valute
+                if (dto.getBalance() < 0) {
+                    throw new IllegalArgumentException("Balans mora da je pozitivan");
+                }
+                if (dto.getCurrency() == null || dto.getCurrency().isBlank()) {
+                    throw new IllegalArgumentException("Valuta je obavezna");
+                }
+
+                // Kreiranje i cuvanje account-a
+                Account account = new Account();
+                account.setType(type);
+                account.setBalance(dto.getBalance());
+                account.setCurrency(dto.getCurrency());
+                account.setEmployee(employee);
+
+                Account saved = accountRepository.save(account);
+                savedIds.add(saved.getId());
+
+            } catch (Exception e) {
+                // Svaki neuspešan zapis se beleži
+                failedRecords.add(new FailedRecord(i, e.getMessage()));
+            }
+        }
+
+        return new BulkInsertAccDTO(savedIds, failedRecords);
     }
 
     private AccountDTO mapToDTO(Account account) {
