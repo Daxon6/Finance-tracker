@@ -1,0 +1,38 @@
+#pragma once
+#include <string>
+#include <nlohmann/json.hpp>
+#include <iostream>
+#include <fstream>
+#include <regex>
+
+using json = nlohmann::json;
+
+class Employee
+{
+private:
+	long id;
+	std::string firstname;
+	std::string lastname;
+	std::string email;
+
+public:
+    // Constructor to be used in create
+	Employee(std::string firstname, std::string lastname, std::string email) : firstname(firstname), lastname(lastname), email(email) {}
+
+    // Constructor to be used when retrieving from db
+    Employee(long id ,std::string firstname, std::string lastname, std::string email) : id(id), firstname(firstname), lastname(lastname), email(email) {}
+    
+    // Convert to JSON
+    json to_json() const {
+        return json{
+            {"id", id},
+            {"firstname", firstname},
+            {"lastname", lastname},
+            {"email", email}
+        };
+    }
+
+    void setId(long newId) { id = newId; }
+};
+
+bool createEmployee();
