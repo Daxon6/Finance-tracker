@@ -30,6 +30,10 @@ public class AccountServiceImpl implements AccountService {
         this.employeeRepository = employeeRepository;
     }
 
+    public List<Account> getAllAcc(){
+        return accountRepository.findAll();
+    }
+
     @Override
     @Transactional
     public AccountDTO createAccount(AccountCreateDTO dto) {
