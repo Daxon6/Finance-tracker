@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+
 @Service
 public class AccountServiceImpl implements AccountService {
 
@@ -23,6 +25,10 @@ public class AccountServiceImpl implements AccountService {
                               EmployeeRepository employeeRepository) {
         this.accountRepository = accountRepository;
         this.employeeRepository = employeeRepository;
+    }
+
+    public List<Account> getAllAcc(){
+        return accountRepository.findAll();
     }
 
     @Override
