@@ -1,57 +1,49 @@
 package orion.rs.demo.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import orion.rs.demo.domain.Employee;
-import orion.rs.demo.service.implementation.EmployeeServiceImplementation;
-
-import java.util.List;
+import orion.rs.demo.dto.EmployeeDto;
+import orion.rs.demo.service.EmployeeService;
 
 @RestController
-@RequestMapping("api/employee")
+@RequestMapping("/api/employees")
 @RequiredArgsConstructor
 public class EmployeeController {
 
-    private final EmployeeServiceImplementation employeeService;
+    private final EmployeeService employeeService;
 
-
-    /***
-     * Deleting employee by ID if ID is valid , ID must be entered!
-     * API: http://localhost:8080/api/employee/deleteByID
-     */
-
-    @DeleteMapping(value = "/deleteByID")
-    public ResponseEntity<?> deleteEmployee(@RequestParam Long employee_id){
-
-        try {
-            employeeService.deleteEmployee(employee_id);
-            return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted employee!");
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    @PostMapping
+    public ResponseEntity<EmployeeDto> create(@RequestBody EmployeeDto dto) {
+        EmployeeDto created = employeeService.create(dto);
+        return ResponseEntity.ok(created);
     }
 
-    /**
-     * Get all employes from DB
-     * API: http://localhost:8080/api/employee/getAll
-     * */
-
-
-    @GetMapping(value = "/getAll", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllEmployes(){
-
-        List<Employee> employeeList = null;
-
-        try {
-            employeeList = employeeService.getAllEmployes();
-        }catch (Exception e){
-            e.printStackTrace(); /*** some error occurred*/
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(employeeList);
+    @GetMapping
+    public ResponseEntity<Page<EmployeeDto>> getAll(Pageable pageable) {
+        Page<EmployeeDto> page = employeeService.getAll(pageable);
+        return ResponseEntity.ok(page);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeDto> getById(@PathVariable Long id) {
+        EmployeeDto dto = employeeService.getById(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EmployeeDto> update(@PathVariable Long id,
+                                              @RequestBody EmployeeDto dto) {
+        EmployeeDto updated = employeeService.update(id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        employeeService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

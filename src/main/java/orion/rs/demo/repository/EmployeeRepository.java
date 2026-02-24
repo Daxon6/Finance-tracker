@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 import orion.rs.demo.domain.Employee;
 
 @Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-
-
+public interface EmployeeRepository
+        extends JpaRepository<Employee, Long> {
 }

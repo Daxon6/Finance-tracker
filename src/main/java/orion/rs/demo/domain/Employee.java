@@ -27,5 +27,4 @@ public class Employee {
     @JsonIgnore //rekurzivno trazenje instanci dolazi do greske - ovako resavamo
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     private List<Account> employeeAcounts = new ArrayList<>();
-
 }
