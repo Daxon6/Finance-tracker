@@ -12,6 +12,7 @@ import orion.rs.demo.dto.BulkEmployeeDTO;
 import orion.rs.demo.dto.EmployeeDto;
 import orion.rs.demo.service.EmployeeService;
 import orion.rs.demo.service.implementation.EmployeeServiceImplementation;
+import orion.rs.demo.validationObj.FailedEmployee;
 
 import javax.print.attribute.standard.Media;
 import java.util.List;
@@ -62,4 +63,14 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    /**
+     * Get invalid bulk insert Employees
+     * */
+    /*
+    @GetMapping(value = "/getInvalidBulkEmployees", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<FailedEmployee>> getInvalidEmployee(){
+
+    }
+    */
+     
 }

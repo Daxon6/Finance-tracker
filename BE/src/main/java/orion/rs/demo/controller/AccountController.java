@@ -3,14 +3,13 @@ package orion.rs.demo.controller;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import orion.rs.demo.domain.Account;
-import orion.rs.demo.domain.Account;
 import orion.rs.demo.dto.AccountCreateDTO;
 import orion.rs.demo.dto.AccountDTO;
+import orion.rs.demo.dto.BulkInsertAccDTO;
 import orion.rs.demo.service.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import orion.rs.demo.service.implementation.AccountServiceImpl;
 
@@ -49,5 +48,13 @@ public class AccountController {
     @GetMapping(value = "getAccounts",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Account>> getAllAcc(){
         return ResponseEntity.status(HttpStatus.OK).body(accountServiceImpl.getAllAcc());
+    }
+
+    @PostMapping("/bulk")
+    public ResponseEntity<BulkInsertAccDTO> bulkInsertAccounts(
+            @RequestBody List<AccountCreateDTO> dtos) {
+
+        BulkInsertAccDTO result = accountService.bulkInsert(dtos);
+        return ResponseEntity.ok(result);
     }
 }
