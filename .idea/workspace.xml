@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="39b6d27d-7db2-465e-98de-6f6eda0129f6" name="Changes" comment="" />
+    <list default="true" id="39b6d27d-7db2-465e-98de-6f6eda0129f6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/java/orion/rs/demo/controller/TransactionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/BE/src/main/java/orion/rs/demo/controller/TransactionController.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -48,7 +51,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.FinanceTrackerApplication.executor": "Run",
-    "git-widget-placeholder": "restructure-branch",
+    "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.15",
@@ -59,7 +62,8 @@
 }]]></component>
   <component name="RunManager">
     <configuration name="FinanceTrackerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <module name="demo" />
+      <option name="ALTERNATIVE_JRE_PATH" value="$PROJECT_DIR$/../../../../Program Files/Java/jdk-17" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="orion.rs.demo.FinanceTrackerApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -84,6 +88,7 @@
       <workItem from="1771845801821" duration="2745000" />
       <workItem from="1771878958657" duration="7004000" />
       <workItem from="1771924300728" duration="1443000" />
+      <workItem from="1771930589578" duration="4352000" />
     </task>
     <servers />
   </component>
