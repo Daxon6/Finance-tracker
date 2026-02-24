@@ -12,4 +12,5 @@ public interface AccountService {
      */
     AccountDTO createAccount(AccountCreateDTO dto);
     public AccountDTO updateAccount(Long id, AccountCreateDTO dto);
+    void deleteAccount(Long id);
 }

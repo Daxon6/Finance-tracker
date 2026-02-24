@@ -1,10 +1,12 @@
 package orion.rs.demo.service.implementation;
 
+import jakarta.persistence.EntityNotFoundException;
 import orion.rs.demo.domain.Account;
 import orion.rs.demo.domain.AccountType;
 import orion.rs.demo.domain.Employee;
 import orion.rs.demo.dto.AccountCreateDTO;
 import orion.rs.demo.dto.AccountDTO;
+import orion.rs.demo.exceptionHandling.AccountNotFoundException;
 import orion.rs.demo.repository.AccountRepository;
 import orion.rs.demo.repository.EmployeeRepository;
 import orion.rs.demo.service.AccountService;
@@ -73,6 +75,15 @@ public class AccountServiceImpl implements AccountService {
                     HttpStatus.INTERNAL_SERVER_ERROR, "Greska prilikom cuvanja zaposlenog");
         }
     }
+
+    @Override
+    public void deleteAccount(Long id) {
+        if (!accountRepository.existsById(id)) {
+            throw new AccountNotFoundException(id);
+        }
+        accountRepository.deleteById(id);
+    }
+
     private AccountDTO mapToDTO(Account account) {
         return new AccountDTO(
                 account.getId(),
