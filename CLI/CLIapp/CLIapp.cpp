@@ -1,0 +1,56 @@
+#include <iostream>
+using namespace std;
+#include <vector>
+#include "Account.h"
+#include "Employee.h"
+#include "Transaction.h"
+bool running = true;
+vector<Employee> employees;
+vector<Account> accounts;
+vector<Transaction> transactions;
+void main() {
+	// ucitas iz json i/ili iz baze
+	
+	//store u vector
+	while (running) {
+		cout << "Choose one of the following options:" << endl;
+		cout << "1. Create Transaction" << endl;
+		cout << "2. Create Account" << endl;
+		cout << "3. Create Employee" << endl;
+		cout << "4. Store entries in DB" << endl;
+		cout << "5. Track new transactions in real-time" << endl;
+		cout << "6. Sync Accounts with backend" << endl;
+		cout << "7. Exit" << endl;
+		cout << "=====================================" << endl;
+		int choise;
+		cin >> choise;
+		switch (choise) {
+		case 1:
+			cout << 1;
+			break;
+		case 2:
+			cout << 2;
+			break;
+		case 3:
+			cout << 3;
+			break;
+		case 4:
+			cout << 4;
+			break;
+		case 5:
+			cout << 5;
+			break;
+		case 6:
+			cout << 6;
+			break;
+		case 7:
+			cout << "Exiting";
+			running = false;
+			break;
+		default:
+			cout << "Wrong input, try again." << endl;
+			break;
+		}
+	}
+
+}
