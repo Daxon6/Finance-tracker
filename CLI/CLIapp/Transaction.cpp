@@ -11,7 +11,7 @@ bool createTransaction()
         empFile.close();
     }
 
-    if (jEmployees.empty()) {
+    if (jEmployees.empty()) {// TODO: dodati api call i proveriti da li postoje podaci na njemu
         std::cout << "No employees found. Please create employees first.\n";
         return false;
     }
@@ -69,7 +69,7 @@ bool createTransaction()
         accFile.close();
     }
 
-    if (jAccounts.empty()) {
+    if (jAccounts.empty()) {// TODO: dodati api call i proveriti da li postoje podaci na njemu
         std::cout << "No accounts found. Please create accounts first.\n";
         return false;
     }
@@ -141,6 +141,30 @@ bool createTransaction()
 
     // date check
 
+    
+
+    std::string datePart, timePart, fullDate;
+
+    std::regex pattern(
+        R"(^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\s([01]\d|2[0-3]):[0-5]\d:[0-5]\d$)"
+    );
+
+    while (true) {
+        std::cout << "Please enter the date: (format: %Y-%m-%d)\n";
+        std::cin >> datePart;
+        std::cout << "Please enter the time: (format: %H:%M:%S)\n";
+        std::cin >> timePart;  // read two tokens
+        fullDate = datePart +" " + timePart;
+
+        if (std::regex_match(fullDate, pattern))
+            break;
+
+        std::cout << "Invalid format. Try again:\n";
+    }
+    //conversion into chrono date
+    std::chrono::system_clock::time_point date = stringToTimePoint(fullDate);
+
+
     // amount check
     long long amount;
     while (true)
@@ -200,8 +224,62 @@ bool createTransaction()
         }
 
     }
+    // cuvanje u json
+    Transaction transaction(0, emp, acc, description, 0, date, amount, category, status);
 
+    json transactions = json::array();
+    std::ifstream inFile("transactions.json");
 
+    if (inFile.is_open()) {
+        try {
+            inFile >> transactions;
+        }
+        catch (...) {
+            transactions = json::array();
+        }
+        inFile.close();
+    }
+    transactions.push_back(transaction.to_json());
+    std::ofstream outFile("transactions.json");
+    outFile << transactions.dump(4);
+    outFile.close();
+
+    std::cout << "\nTransaction saved successfully!\n";
     std::cout << "=====================================" << std::endl;
     return false;
+}
+
+std::string timePointToString(std::chrono::system_clock::time_point tp)
+{
+    std::time_t t = std::chrono::system_clock::to_time_t(tp);
+
+    std::tm tm{};
+    gmtime_s(&tm, &t);
+
+    std::stringstream ss;
+    ss << std::put_time(&tm, "%Y-%m-%d %H:%M:%SZ");
+    return ss.str();
+}
+std::chrono::system_clock::time_point stringToTimePoint(const std::string& str)
+{
+    std::istringstream iss(str);
+    std::chrono::system_clock::time_point tp;
+
+    iss >> std::chrono::parse("%Y-%m-%d %H:%M:%SZ", tp);//"%Y-%m-%dT%H:%M:%SZ"
+
+    return tp;
+}
+
+json Transaction::to_json() const {
+    return {
+        {"id", id},
+        {"reporter", reporter.to_json()},
+        {"account", account.to_json()},
+        {"description", description},
+        {"version", version},
+        {"date", timePointToString(now)},
+        {"amount", amount},
+        {"category", category},
+        {"status", statusToString(status)}
+    };
 }
