@@ -46,3 +46,5 @@ bool createTransaction();
 std::string timePointToString(std::chrono::system_clock::time_point tp);
 
 std::chrono::system_clock::time_point stringToTimePoint(const std::string& str);
+
+bool storeTransactionInDb();

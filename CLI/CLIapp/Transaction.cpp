@@ -283,3 +283,8 @@ json Transaction::to_json() const {
         {"status", statusToString(status)}
     };
 }
+
+bool storeTransactionInDb() {
+
+    return false;
+}
