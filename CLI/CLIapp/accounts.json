@@ -1,0 +1,16 @@
+[
+    {
+        "balance": 3000.0,
+        "currency": "rsd",
+        "employee": {
+            "email": "test@gmail.com",
+            "firstname": "test",
+            "id": 0,
+            "lastname": "test"
+        },
+        "id": 1,
+        "type": "GOLD",
+        "version": 1
+    },
+  
+]
