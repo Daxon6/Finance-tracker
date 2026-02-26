@@ -1,6 +1,7 @@
 package com.orioninc.financetracker.view
 
 import android.app.DatePickerDialog
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -23,6 +24,7 @@ import com.orioninc.financetracker.model.Account
 import com.orioninc.financetracker.model.Employee
 import com.orioninc.financetracker.model.Status
 import com.orioninc.financetracker.model.Transaction
+import com.orioninc.financetracker.model.TransactionCreateDTO
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -56,8 +58,8 @@ fun TransactionScreenRoute(
         onFilterByAccount = { transactionViewModel.filterByAccount(it) },
         onFilterByStatus = { transactionViewModel.filterByStatus(it) },
         onFilterByDate = { transactionViewModel.filterByDate(it) },
-        onCreateTransaction = {description,amount,category,date,status,reporter,account ->
-            transactionViewModel.createTransaction(description,amount,category,date,status,reporter,account)
+        onCreateTransaction = { dto: TransactionCreateDTO ->
+            transactionViewModel.createTransaction(dto)
         }
     )
 }
@@ -75,10 +77,12 @@ fun TransactionScreen(
     onFilterByAccount: (Long) -> Unit,
     onFilterByStatus: (Status) -> Unit,
     onFilterByDate: (Date) -> Unit,
-    onCreateTransaction: (description: String, amount: Double, category: String, date: Date, status: Status, reporter: Employee, account: Account) -> Unit
+    onCreateTransaction: (TransactionCreateDTO) -> Unit
 )  {
     val context = LocalContext.current
     val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    val dateFormatter2 = SimpleDateFormat("yyyy-mm-dd hh:mm:ss", Locale.getDefault())
+
     var menuExpanded by remember { mutableStateOf(false) }
 
     var showActionDialog by remember { mutableStateOf(false) }
@@ -202,7 +206,7 @@ fun TransactionScreen(
         var description by remember { mutableStateOf("") }
         var amount by remember { mutableStateOf("") }
         var category by remember { mutableStateOf("") }
-        var selectedStatus by remember { mutableStateOf(Status.Pending) }
+        var selectedStatus by remember { mutableStateOf(Status.PENDING) }
         var selectedDate by remember { mutableStateOf(Date()) }
 
         var expandedEmployee by remember { mutableStateOf(false) }
@@ -291,7 +295,7 @@ fun TransactionScreen(
                         onExpandedChange = { expandedAccount = !expandedAccount }
                     ) {
                         OutlinedTextField(
-                            value = selectedAccount?.let { "ID: ${it.idAccount}, ${it.accountType}" } ?: "",
+                            value = selectedAccount?.let { "ID: ${it.idAccount}" } ?: "",
                             onValueChange = {},
                             label = { Text("Select Account") },
                             readOnly = true,
@@ -319,15 +323,17 @@ fun TransactionScreen(
             confirmButton = {
                 TextButton(onClick = {
                     if (selectedEmployee != null && selectedAccount != null) {
-                        onCreateTransaction(
-                            description,
-                            amount.toDoubleOrNull() ?: 0.0,
-                            category,
-                            selectedDate,
-                            selectedStatus,
-                            selectedEmployee!!,
-                            selectedAccount!!
+                        val dto = TransactionCreateDTO(
+                            reporter = selectedEmployee!!.idEmployee,
+                            account = selectedAccount!!.idAccount,
+                            description = description,
+                            date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(selectedDate),
+                            amount = amount.toDoubleOrNull() ?: 0.0,
+                            category = category,
+                            status = selectedStatus
                         )
+                        Log.d("DEBUG",""+dto.reporter+dto.account+dto.description+dto.date+dto.amount+dto.category+dto.status)
+                        onCreateTransaction(dto)
                         showCreateDialog = false
                     } else {
                         Toast.makeText(context, "Select employee and account", Toast.LENGTH_SHORT).show()

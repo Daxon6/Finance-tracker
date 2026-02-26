@@ -5,6 +5,7 @@ import com.orioninc.financetracker.model.Account
 import com.orioninc.financetracker.model.Employee
 import com.orioninc.financetracker.model.Transaction
 import com.orioninc.financetracker.model.Status
+import com.orioninc.financetracker.model.TransactionCreateDTO
 import com.orioninc.financetracker.repository.TransactionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -46,29 +47,10 @@ class TransactionViewModel @Inject constructor(
             }
         }
     }
-    fun createTransaction(
-        description: String,
-        amount: Double,
-        category: String,
-        date: Date,
-        status: Status,
-        reporter: Employee,
-        selectedAccount: Account
-    ) {
+    fun createTransaction(transaction: TransactionCreateDTO) {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                val transaction = Transaction(
-                    idTransaction = 0L,
-                    description = description,
-                    amount = amount,
-                    category = category,
-                    date = date,
-                    status = status,
-                    reporter = reporter,
-                    version = 3,
-                    account = selectedAccount
-                )
                 repository.createTransaction(transaction)
                 loadTransactions()
                 _error.value = null
