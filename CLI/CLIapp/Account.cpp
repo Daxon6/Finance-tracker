@@ -143,7 +143,7 @@ bool Account::createAccount() {
             std::cout << "Number out of range\n";
         }
     }
-    long newId = 1;
+    
     int version = 1;
     json accounts = json::array();
     std::ifstream inFile("accounts.json");
@@ -151,20 +151,18 @@ bool Account::createAccount() {
         try { inFile >> accounts; }
         catch (...) { accounts = json::array(); }
         inFile.close();
-        if (!accounts.empty())
-            newId = accounts.back()["id"].get<long>() + 1;
+       
     }
 
-    Account account(newId, accType, balance, currency, version, emp.getId());
+    Account account(0, accType, balance, currency, version, emp.getId());
     accounts.push_back(account.to_json());
 
     std::ofstream outFile("accounts.json");
     outFile << accounts.dump(4);
     outFile.close();
 
-    std::cout << "\nAccount saved successfully! ID: " << newId
-        << ", Assigned to employee: " << emp.to_json()["firstname"] << " "
-        << emp.to_json()["lastname"] << "\n";
+    std::cout << "\nAccount saved successfully! ID: "
+        << ", Assigned to employee: "<< "\n";
 
     return true;
 }
