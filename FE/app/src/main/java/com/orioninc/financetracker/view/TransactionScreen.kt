@@ -190,7 +190,6 @@ fun TransactionScreen(
         }
     }
 
-    // ACTION DIALOG
     if (showActionDialog) {
         AlertDialog(
             onDismissRequest = { showActionDialog = false },
@@ -216,7 +215,7 @@ fun TransactionScreen(
             confirmButton = { TextButton(onClick = { showActionDialog = false }) { Text("Cancel") } }
         )
     }
-// CREATE TRANSACTION DIALOG
+
     if (showCreateDialog) {
         var description by remember { mutableStateOf("") }
         var amount by remember { mutableStateOf("") }
@@ -260,7 +259,6 @@ fun TransactionScreen(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Status Radio Buttons
                     Column {
                         Status.values().forEach { status ->
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -272,7 +270,6 @@ fun TransactionScreen(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Employee Dropdown
                     ExposedDropdownMenuBox(
                         expanded = expandedEmployee,
                         onExpandedChange = { expandedEmployee = !expandedEmployee }
@@ -304,7 +301,6 @@ fun TransactionScreen(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Account Dropdown
                     ExposedDropdownMenuBox(
                         expanded = expandedAccount,
                         onExpandedChange = { expandedAccount = !expandedAccount }
@@ -361,17 +357,49 @@ fun TransactionScreen(
 
     if (showUpdateDialog && selectedTransaction != null) {
 
-        var description by remember { mutableStateOf(selectedTransaction!!.description) }
-        var amount by remember { mutableStateOf(selectedTransaction!!.amount.toString()) }
-        var category by remember { mutableStateOf(selectedTransaction!!.category) }
-        var selectedStatus by remember { mutableStateOf(selectedTransaction!!.status) }
-        var selectedDate by remember { mutableStateOf(selectedTransaction!!.date) }
+
+        var description by remember(selectedTransaction) {
+            mutableStateOf(selectedTransaction!!.description)
+        }
+
+        var amount by remember(selectedTransaction) {
+            mutableStateOf(selectedTransaction!!.amount.toString())
+        }
+
+        var category by remember(selectedTransaction) {
+            mutableStateOf(selectedTransaction!!.category)
+        }
+
+        var selectedStatus by remember(selectedTransaction) {
+            mutableStateOf(selectedTransaction!!.status)
+        }
+
+        var selectedDate by remember(selectedTransaction) {
+            mutableStateOf(selectedTransaction!!.date)
+        }
 
         var expandedEmployee by remember { mutableStateOf(false) }
-        var selectedEmployee by remember { mutableStateOf(selectedTransaction!!.reporter) }
+
+        var selectedEmployee by remember(selectedTransaction) {
+            mutableStateOf(selectedTransaction!!.reporter)
+        }
 
         var expandedAccount by remember { mutableStateOf(false) }
-        var selectedAccount by remember { mutableStateOf(selectedTransaction!!.account) }
+
+        var selectedAccount by remember(selectedTransaction) {
+            mutableStateOf(selectedTransaction!!.account)
+        }
+//        var description by remember { mutableStateOf(selectedTransaction!!.description) }
+//        var amount by remember { mutableStateOf(selectedTransaction!!.amount.toString()) }
+//        var category by remember { mutableStateOf(selectedTransaction!!.category) }
+//        var selectedStatus by remember { mutableStateOf(selectedTransaction!!.status) }
+//        var selectedDate by remember { mutableStateOf(selectedTransaction!!.date) }
+//
+//        var expandedEmployee by remember { mutableStateOf(false) }
+//        var selectedEmployee by remember { mutableStateOf(selectedTransaction!!.reporter) }
+//
+//        var expandedAccount by remember { mutableStateOf(false) }
+//        var selectedAccount by remember { mutableStateOf(selectedTransaction!!.account) }
 
         AlertDialog(
             onDismissRequest = { showUpdateDialog = false },
@@ -410,6 +438,70 @@ fun TransactionScreen(
                             }
                         }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    ExposedDropdownMenuBox(
+                        expanded = expandedEmployee,
+                        onExpandedChange = { expandedEmployee = !expandedEmployee }
+                    ) {
+                        OutlinedTextField(
+                            value = "${selectedEmployee.firstName} ${selectedEmployee.lastName}",
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("Select Employee") },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedEmployee)
+                            },
+                            modifier = Modifier.menuAnchor()
+                        )
+
+                        DropdownMenu(
+                            expanded = expandedEmployee,
+                            onDismissRequest = { expandedEmployee = false }
+                        ) {
+                            employees.forEach { employee ->
+                                DropdownMenuItem(
+                                    text = { Text("${employee.firstName} ${employee.lastName}") },
+                                    onClick = {
+                                        selectedEmployee = employee
+                                        expandedEmployee = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    ExposedDropdownMenuBox(
+                        expanded = expandedAccount,
+                        onExpandedChange = { expandedAccount = !expandedAccount }
+                    ) {
+                        OutlinedTextField(
+                            value = "ID: ${selectedAccount.idAccount}",
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("Select Account") },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedAccount)
+                            },
+                            modifier = Modifier.menuAnchor()
+                        )
+
+                        DropdownMenu(
+                            expanded = expandedAccount,
+                            onDismissRequest = { expandedAccount = false }
+                        ) {
+                            accounts.forEach { account ->
+                                DropdownMenuItem(
+                                    text = { Text("ID: ${account.idAccount}") },
+                                    onClick = {
+                                        selectedAccount = account
+                                        expandedAccount = false
+                                    }
+                                )
+                            }
+                        }
+                    }
                 }
             },
             confirmButton = {
@@ -441,7 +533,6 @@ fun TransactionScreen(
         )
     }
 
-    // EMPLOYEE FILTER DIALOG
     if (showEmployeeDialog) {
         AlertDialog(
             onDismissRequest = { showEmployeeDialog = false },
@@ -462,7 +553,6 @@ fun TransactionScreen(
         )
     }
 
-    // ACCOUNT FILTER DIALOG
     if (showAccountDialog) {
         AlertDialog(
             onDismissRequest = { showAccountDialog = false },
@@ -483,7 +573,6 @@ fun TransactionScreen(
         )
     }
 
-    // STATUS FILTER DIALOG
     if (showStatusDialog) {
         AlertDialog(
             onDismissRequest = { showStatusDialog = false },

@@ -90,15 +90,8 @@ class TransactionViewModel @Inject constructor(
     }
     fun updateTransaction(id: Long, dto: TransactionCreateDTO) {
         viewModelScope.launch {
-            try {
-                loading.postValue(true)
-                repository.updateTransaction(id, dto)
-                loadTransactions()
-            } catch (e: Exception) {
-                error.postValue(e.message)
-            } finally {
-                loading.postValue(false)
-            }
+            repository.updateTransaction(id, dto)
+            loadTransactions()
         }
     }
 }
