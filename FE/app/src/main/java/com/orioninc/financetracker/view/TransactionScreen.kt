@@ -23,6 +23,11 @@ import com.orioninc.financetracker.model.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+import android.graphics.pdf.PdfDocument
+import android.os.Environment
+import java.io.File
+import java.io.FileOutputStream
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionScreenRoute(
@@ -77,6 +82,23 @@ fun TransactionScreen(
     onDeleteTransaction: (Long) -> Unit
 ) {
     val context = LocalContext.current
+    var showPdfDialog by remember { mutableStateOf(false) }
+
+    fun createReport(days: Int) {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_YEAR, -days)
+        val startDate = calendar.time
+
+        val filtered = transactions.filter { it.date.after(startDate) }
+        val reportTitle = if (days == 1) "Last 24h" else "Last 7 days"
+
+        if (filtered.isEmpty()) {
+            Toast.makeText(context, "No transactions in this period", Toast.LENGTH_SHORT).show()
+        } else {
+            generatePdfReport(context, filtered, reportTitle)
+        }
+    }
+
     val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
     var menuExpanded by remember { mutableStateOf(false) }
@@ -99,6 +121,11 @@ fun TransactionScreen(
             CenterAlignedTopAppBar(
                 title = { Text("Finance Tracker", color = Color.White, fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = softDarkGray),
+                navigationIcon = {
+                    IconButton(onClick = { showPdfDialog = true }) {
+                        Icon(Icons.Default.Share, contentDescription = "PDF", tint = Color.White)
+                    }
+                },
                 actions = {
                     IconButton(onClick = { menuExpanded = true }) {
                         Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Color.White)
@@ -205,6 +232,28 @@ fun TransactionScreen(
     }
     if (showStatusDialog) {
         FilterListDialog("Status", Status.values().map { it.ordinal.toLong() to it.name }, { onFilterByStatus(Status.values()[it.toInt()]) }, { showStatusDialog = false })
+    }
+    if (showPdfDialog) {
+        AlertDialog(
+            onDismissRequest = { showPdfDialog = false },
+            title = { Text("Generate PDF Report") },
+            text = { Text("Select period:") },
+            confirmButton = {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        onClick = { createReport(1); showPdfDialog = false },
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    ) { Text("Yesterday") }
+                    Button(
+                        onClick = { createReport(7); showPdfDialog = false },
+                        modifier = Modifier.fillMaxWidth()
+                    ) { Text("Last 7 days") }
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPdfDialog = false }) { Text("Cancel") }
+            }
+        )
     }
 }
 
@@ -400,4 +449,46 @@ fun TransactionEntryDialog(
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
     )
+
+}
+
+fun generatePdfReport(context: android.content.Context, transactions: List<Transaction>, title: String) {
+    val pdfDocument = PdfDocument()
+    val paint = android.graphics.Paint()
+    val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
+    val page = pdfDocument.startPage(pageInfo)
+    val canvas = page.canvas
+
+    paint.textSize = 20f
+    paint.isFakeBoldText = true
+    canvas.drawText("Finance Report: $title", 40f, 50f, paint)
+
+    paint.textSize = 12f
+    paint.isFakeBoldText = false
+    var y = 100f
+    canvas.drawText("Description", 40f, y, paint)
+    canvas.drawText("Amount", 300f, y, paint)
+    canvas.drawText("Date", 450f, y, paint)
+    canvas.drawLine(40f, y + 5, 550f, y + 5, paint)
+    y += 30f
+
+    val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+    transactions.forEach { tx ->
+        if (y < 800f) {
+            canvas.drawText(tx.description, 40f, y, paint)
+            canvas.drawText("${tx.amount} RSD", 300f, y, paint)
+            canvas.drawText(sdf.format(tx.date), 450f, y, paint)
+            y += 25f
+        }
+    }
+    pdfDocument.finishPage(page)
+    val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "Report_${System.currentTimeMillis()}.pdf")
+    try {
+        pdfDocument.writeTo(FileOutputStream(file))
+        Toast.makeText(context, "PDF saved in Download folder", Toast.LENGTH_LONG).show()
+    } catch (e: Exception) {
+        Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+    } finally {
+        pdfDocument.close()
+    }
 }
