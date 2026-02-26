@@ -49,19 +49,24 @@ public class TransactionController {
     }
 
     @GetMapping(value = "/exportCSVtransactions")
-    public void exportToCSV(HttpServletResponse servletResponse) throws IOException{
+    public void exportToCSV(HttpServletResponse servletResponse) throws IOException {
+
         servletResponse.setContentType("text/csv");
         servletResponse.setHeader("Content-Disposition", "attachment; filename=transakcije.csv");
+
         List<Transaction> transactionList = transactionService.getAllTransaction();
         PrintWriter printWriter = servletResponse.getWriter();
 
-        printWriter.println("Amount, status, description and date od transactions");
 
-        for(Transaction t : transactionList){
-            printWriter.println(t.getAmount() + "\n" + t.getStatus() + "\n"+ t.getDescription() + "\n" + t.getDate()
+        printWriter.println("Amount,Status,Description,Date");
+
+        for (Transaction t : transactionList) {
+            printWriter.println(
+                    t.getAmount() + "," +
+                            t.getStatus() + "," +
+                            t.getDescription() + "," +
+                            t.getDate()
             );
-
-            printWriter.println("\n\n\n");
         }
 
         printWriter.flush();

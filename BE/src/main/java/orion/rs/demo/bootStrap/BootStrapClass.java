@@ -115,7 +115,7 @@ public class BootStrapClass implements CommandLineRunner {
         trans1.setAmount(BigDecimal.valueOf(4500.00));
         trans1.setDate(new Date());
         trans1.setAccount(account1);
-        trans1.setStatus(Status.COMPLETED);
+        trans1.setStatus(Status.PENDING);
         trans1.setReporter(employee2);
 
         transactionRepository.save(trans1);
