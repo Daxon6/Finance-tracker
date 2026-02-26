@@ -79,12 +79,12 @@ bool Account::createAccount() {
     try {
         json j = json::parse(response);
 
-        // Check if "content" exists and is an array
-        if (j.contains("content") && j["content"].is_array()) {
-            jEmployees = j["content"];
+        // Check if response itself is an array
+        if (j.is_array()) {
+            jEmployees = j;
         }
         else {
-            std::cout << "Invalid API response format.\n";
+            std::cout << "Invalid API response format. Expected JSON array.\n";
             return false;
         }
     }
@@ -109,8 +109,8 @@ bool Account::createAccount() {
         for (size_t i = 0; i < jEmployees.size(); ++i) {
             const auto& e = jEmployees[i];
             std::cout << i + 1 << ". [" << e["id"] << "] "
-                << e["firstName"].get<std::string>() << " "
-                << e["lastName"].get<std::string>()
+                << e["firstname"].get<std::string>() << " "
+                << e["lastname"].get<std::string>()
                 << " (" << e["email"].get<std::string>() << ")\n";
         }
 
@@ -126,8 +126,8 @@ bool Account::createAccount() {
 
                 emp = Employee(
                     selected["id"].get<long>(),
-                    selected["firstName"].get<std::string>(),
-                    selected["lastName"].get<std::string>(),
+                    selected["firstname"].get<std::string>(),
+                    selected["lastname"].get<std::string>(),
                     selected["email"].get<std::string>()
                 );
 
