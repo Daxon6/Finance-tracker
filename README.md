@@ -21,7 +21,7 @@ My work focused on backend development, specifically designing and implementing 
   - Service layer
   - Controller layer
 
-- Developed full **CRUD operations** for Employee management:
+- Designed and implemented RESTful CRUD endpoints for Employee management:
   - Create
   - Read
   - Update
